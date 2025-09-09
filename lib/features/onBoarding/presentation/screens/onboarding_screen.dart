@@ -1,3 +1,4 @@
+import 'package:clozii/features/auth/presentation/screens/auth_screen.dart';
 import 'package:flutter/material.dart';
 
 // core
@@ -40,7 +41,12 @@ class OnBoardingScreen extends StatelessWidget {
               /// 회원가입 버튼
               /// - 클릭 시 AuthType.signup을 전달하여 회원가입 화면으로 이동
               _SignUpButton(
-                onTap: () => navigateToAuth(context, AuthType.signup),
+                // onTap: () => navigateToAuth(context, AuthType.signup),
+                onTap: () {
+                  Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute(builder: (context) => AuthScreen()));
+                },
               ),
 
               /// 로그인 링크
