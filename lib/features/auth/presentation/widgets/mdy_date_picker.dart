@@ -6,14 +6,14 @@ class PhilippinesDateField extends StatefulWidget {
   const PhilippinesDateField({
     super.key,
     required this.controller,
-    this.focusNode,
+    required this.focusNode,
     this.onChanged,
     this.label = 'Date of Birth',
     this.hintText = 'MM/DD/YYYY',
   });
 
   final TextEditingController controller;
-  final FocusNode? focusNode;
+  final FocusNode focusNode;
   final ValueChanged<DateTime?>? onChanged;
   final String label;
   final String hintText;

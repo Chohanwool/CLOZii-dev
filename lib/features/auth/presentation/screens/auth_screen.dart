@@ -15,6 +15,7 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   int _currentStep = 1;
   bool _isNameValid = false;
+  String? _selectedGender;
 
   // 상수로 분리
   static const int _phoneNumberMaxLength = 11;
@@ -27,6 +28,9 @@ class _AuthScreenState extends State<AuthScreen> {
   final FocusNode _nameFocusNode = FocusNode();
 
   final TextEditingController _dateController = TextEditingController();
+  final FocusNode _dateFocusNode = FocusNode();
+
+  final FocusNode _genderFocusNode = FocusNode();
   DateTime? _birthDate;
 
   @override
@@ -37,19 +41,11 @@ class _AuthScreenState extends State<AuthScreen> {
 
     _nameController.addListener(_checkNameValid);
 
+    _dateController.addListener(_checkBirthdayValid);
+
     _phoneNumberFocusNode.addListener(() {
       setState(() {});
     });
-  }
-
-  void _checkNameValid() {
-    final isValid = _nameController.text.trim().isNotEmpty;
-
-    if (_isNameValid != isValid) {
-      setState(() {
-        _isNameValid = isValid;
-      });
-    }
   }
 
   @override
@@ -61,6 +57,30 @@ class _AuthScreenState extends State<AuthScreen> {
     _phoneNumberFocusNode.dispose();
     _nameFocusNode.dispose();
     super.dispose();
+  }
+
+  void _checkBirthdayValid() {
+    if (_birthDate != null) {
+      setState(() {
+        _currentStep = 4;
+      });
+
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted) {
+          _genderFocusNode.requestFocus();
+        }
+      });
+    }
+  }
+
+  void _checkNameValid() {
+    final isValid = _nameController.text.trim().isNotEmpty;
+
+    if (_isNameValid != isValid) {
+      setState(() {
+        _isNameValid = isValid;
+      });
+    }
   }
 
   void _checkPhoneNumberComplete() {
@@ -94,35 +114,43 @@ class _AuthScreenState extends State<AuthScreen> {
     return '$_phoneNumberPrefix$numberWithoutPrefix';
   }
 
-  void _submitForm() {
+  void _nameAndPhoneNumberCheck() {
     final phoneNumber = _completePhoneNumber;
     final name = _nameController.text.trim();
 
-    if (_currentStep == 2 && phoneNumber.length == 13 && name.isNotEmpty) {
+    if (phoneNumber.length == 13 && name.isNotEmpty) {
       setState(() {
         _currentStep = 3;
       });
+      _dateFocusNode.requestFocus();
       print('Phone: $phoneNumber, Name: $name');
     }
-
-    // _currentStep = 3 일때는  인증 번호 검증 로직 추가
   }
+
+  void allFieldCheck() {}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
 
-      bottomSheet: _currentStep == 2
+      bottomSheet: (_currentStep == 2 || _currentStep == 4)
           ? Material(
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 color: Colors.transparent,
-                child: CustomButton(
-                  text: 'Continue',
-                  onTap: _isNameValid ? _submitForm : null,
-                  height: 50,
-                ),
+                child: _currentStep == 2
+                    ? CustomButton(
+                        text: 'Continue',
+                        onTap: _isNameValid ? _nameAndPhoneNumberCheck : null,
+                        height: 50,
+                      )
+                    : CustomButton(
+                        // _currentStep == 3
+                        text: 'Verify & Complete',
+                        onTap: _birthDate != null ? allFieldCheck : null,
+                        height: 50,
+                      ),
               ),
             )
           : null,
@@ -142,9 +170,37 @@ class _AuthScreenState extends State<AuthScreen> {
 
               const SizedBox(height: 24.0),
 
+              if (_currentStep >= 4) ...[
+                DropdownButtonFormField<String>(
+                  focusNode: _genderFocusNode,
+                  value: _selectedGender,
+                  items: ['Male', 'Female', 'Prefer not to say']
+                      .map(
+                        (g) => DropdownMenuItem(
+                          value: g,
+                          child: Text(g, style: context.textTheme.bodyLarge),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (val) => setState(() => _selectedGender = val),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    label: Text('Gender', style: context.textTheme.labelLarge),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black54),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24.0),
+              ],
+
               if (_currentStep >= 3) ...[
                 PhilippinesDateField(
                   controller: _dateController,
+                  focusNode: _dateFocusNode,
                   label: 'Date of Birth',
                   hintText: 'MM/DD/YYYY',
                   onChanged: (date) {
