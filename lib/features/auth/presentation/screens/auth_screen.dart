@@ -14,7 +14,9 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   int _currentStep = 1;
+
   bool _isNameValid = false;
+  DateTime? _birthDate;
   String? _selectedGender;
 
   // 상수로 분리
@@ -31,7 +33,6 @@ class _AuthScreenState extends State<AuthScreen> {
   final FocusNode _dateFocusNode = FocusNode();
 
   final FocusNode _genderFocusNode = FocusNode();
-  DateTime? _birthDate;
 
   @override
   void initState() {
@@ -51,6 +52,9 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   void dispose() {
     _phoneNumberController.removeListener(_checkPhoneNumberComplete);
+    _nameController.removeListener(_checkNameValid);
+    _dateController.removeListener(_checkBirthdayValid);
+
     _phoneNumberController.dispose();
     _nameController.dispose();
 
@@ -114,7 +118,7 @@ class _AuthScreenState extends State<AuthScreen> {
     return '$_phoneNumberPrefix$numberWithoutPrefix';
   }
 
-  void _nameAndPhoneNumberCheck() {
+  void _nameTypedCheck() {
     final phoneNumber = _completePhoneNumber;
     final name = _nameController.text.trim();
 
@@ -123,11 +127,10 @@ class _AuthScreenState extends State<AuthScreen> {
         _currentStep = 3;
       });
       _dateFocusNode.requestFocus();
-      print('Phone: $phoneNumber, Name: $name');
     }
   }
 
-  void allFieldCheck() {}
+  void allFieldValidCheck() {}
 
   @override
   Widget build(BuildContext context) {
@@ -142,13 +145,13 @@ class _AuthScreenState extends State<AuthScreen> {
                 child: _currentStep == 2
                     ? CustomButton(
                         text: 'Continue',
-                        onTap: _isNameValid ? _nameAndPhoneNumberCheck : null,
+                        onTap: _isNameValid ? _nameTypedCheck : null,
                         height: 50,
                       )
                     : CustomButton(
                         // _currentStep == 3
                         text: 'Verify & Complete',
-                        onTap: _birthDate != null ? allFieldCheck : null,
+                        onTap: _birthDate != null ? allFieldValidCheck : null,
                         height: 50,
                       ),
               ),
