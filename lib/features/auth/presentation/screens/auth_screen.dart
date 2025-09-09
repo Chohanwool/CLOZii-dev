@@ -34,6 +34,8 @@ class _AuthScreenState extends State<AuthScreen> {
 
   final FocusNode _genderFocusNode = FocusNode();
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -130,7 +132,17 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  void allFieldValidCheck() {}
+  void allFieldValidCheck() {
+    final isFormValid = _formKey.currentState?.validate() ?? false;
+
+    if (!isFormValid) return;
+
+    // ✅ 모든 검증 통과
+    final phone = _completePhoneNumber;
+    final name = _nameController.text.trim();
+
+    print('✅ VERIFIED: $name | $phone | $_birthDate | $_selectedGender');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,75 +175,86 @@ class _AuthScreenState extends State<AuthScreen> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Signup with phone number',
-                style: context.textTheme.titleLarge,
-              ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Signup with phone number',
+                  style: context.textTheme.titleLarge,
+                ),
 
-              const SizedBox(height: 24.0),
+                const SizedBox(height: 24.0),
 
-              if (_currentStep >= 4) ...[
-                DropdownButtonFormField<String>(
-                  focusNode: _genderFocusNode,
-                  value: _selectedGender,
-                  items: ['Male', 'Female', 'Prefer not to say']
-                      .map(
-                        (g) => DropdownMenuItem(
-                          value: g,
-                          child: Text(g, style: context.textTheme.bodyLarge),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (val) => setState(() => _selectedGender = val),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    label: Text('Gender', style: context.textTheme.labelLarge),
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                if (_currentStep >= 4) ...[
+                  DropdownButtonFormField<String>(
+                    focusNode: _genderFocusNode,
+                    validator: (value) {
+                      if (value == null) {
+                        _selectedGender = 'Prefer not to say';
+                      }
+                    },
+                    value: _selectedGender,
+                    items: ['Male', 'Female', 'Prefer not to say']
+                        .map(
+                          (g) => DropdownMenuItem(
+                            value: g,
+                            child: Text(g, style: context.textTheme.bodyLarge),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (val) => setState(() => _selectedGender = val),
+                    decoration: InputDecoration(
+                      isDense: true,
+                      label: Text(
+                        'Gender',
+                        style: context.textTheme.labelLarge,
+                      ),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
 
-                    border: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black54),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black54),
+                      ),
                     ),
                   ),
+                  const SizedBox(height: 24.0),
+                ],
+
+                if (_currentStep >= 3) ...[
+                  PhilippinesDateField(
+                    controller: _dateController,
+                    focusNode: _dateFocusNode,
+                    label: 'Date of Birth',
+                    hintText: 'MM/DD/YYYY',
+                    onChanged: (date) {
+                      setState(() {
+                        _birthDate = date;
+                      });
+                    },
+                  ),
+
+                  const SizedBox(height: 36.0),
+                ],
+
+                // 이름 필드 (조건부 렌더링)
+                if (_currentStep >= 2) ...[
+                  NameField(
+                    controller: _nameController,
+                    focusNode: _nameFocusNode,
+                  ),
+
+                  const SizedBox(height: 36.0),
+                ],
+
+                PhoneNumberField(
+                  // onChanged: _onPhoneNumberTyped,
+                  controller: _phoneNumberController,
+                  focusNode: _phoneNumberFocusNode,
                 ),
-                const SizedBox(height: 24.0),
               ],
-
-              if (_currentStep >= 3) ...[
-                PhilippinesDateField(
-                  controller: _dateController,
-                  focusNode: _dateFocusNode,
-                  label: 'Date of Birth',
-                  hintText: 'MM/DD/YYYY',
-                  onChanged: (date) {
-                    setState(() {
-                      _birthDate = date;
-                    });
-                  },
-                ),
-
-                const SizedBox(height: 36.0),
-              ],
-
-              // 이름 필드 (조건부 렌더링)
-              if (_currentStep >= 2) ...[
-                NameField(
-                  controller: _nameController,
-                  focusNode: _nameFocusNode,
-                ),
-
-                const SizedBox(height: 36.0),
-              ],
-
-              PhoneNumberField(
-                // onChanged: _onPhoneNumberTyped,
-                controller: _phoneNumberController,
-                focusNode: _phoneNumberFocusNode,
-              ),
-            ],
+            ),
           ),
         ),
       ),

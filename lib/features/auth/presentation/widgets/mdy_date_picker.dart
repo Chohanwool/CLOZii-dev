@@ -75,11 +75,21 @@ class _PhilippinesDateFieldState extends State<PhilippinesDateField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: widget.controller,
       focusNode: widget.focusNode,
       readOnly: true, // 직접 입력 방지
       onTap: _selectDate,
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Invalid Date';
+        }
+
+        final birthYear = int.parse(value.substring(6));
+        if (DateTime.now().year - birthYear < 18) {
+          return 'Age below 18 can\'t use the app.';
+        }
+      },
       decoration: InputDecoration(
         isDense: true,
 

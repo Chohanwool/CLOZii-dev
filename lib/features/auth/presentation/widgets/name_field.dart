@@ -18,9 +18,22 @@ class NameField extends StatefulWidget {
 class _NameFieldState extends State<NameField> {
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: widget.controller,
       focusNode: widget.focusNode,
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Invalid name';
+        }
+
+        if (value.trim().length < 3) {
+          return '\'Name\' must be more than 2 characters.';
+        }
+
+        if (value.trim().length > 20) {
+          return 'Please enter a name less than 20 characters.';
+        }
+      },
       onChanged: (value) {},
       keyboardType: TextInputType.text,
       decoration: InputDecoration(

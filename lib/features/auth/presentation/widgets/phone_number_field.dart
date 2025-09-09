@@ -48,10 +48,23 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       autofocus: true,
       focusNode: widget.focusNode,
       controller: widget.controller,
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Invalid phone number.';
+        }
+
+        if (value.length < 13) {
+          return 'Phone number must be 13-digit number.';
+        }
+
+        if (int.tryParse(value.replaceAll('-', '')) == null) {
+          return 'Only numbers are allowed.';
+        }
+      },
       maxLength: 13, // "09##-###-####" 형식 최대 길이
       // onChanged: widget.onChanged,
       buildCounter: _hideCounter, // 글자수 카운터 숨김
