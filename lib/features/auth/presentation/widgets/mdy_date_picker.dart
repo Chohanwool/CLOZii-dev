@@ -4,13 +4,13 @@ import 'package:intl/intl.dart';
 
 class PhilippinesDateField extends StatefulWidget {
   const PhilippinesDateField({
-    Key? key,
+    super.key,
     required this.controller,
     this.focusNode,
     this.onChanged,
     this.label = 'Date of Birth',
     this.hintText = 'MM/DD/YYYY',
-  }) : super(key: key);
+  });
 
   final TextEditingController controller;
   final FocusNode? focusNode;
@@ -40,6 +40,13 @@ class _PhilippinesDateFieldState extends State<PhilippinesDateField> {
               onPrimary: Colors.white,
               surface: Colors.white,
               onSurface: Colors.black,
+              // 달력 배경을 완전히 흰색으로 설정
+              surfaceContainerHighest: Colors.white,
+              surfaceContainerHigh: Colors.white,
+              surfaceContainer: Colors.white,
+              surfaceContainerLow: Colors.white,
+              surfaceContainerLowest: Colors.white,
+              surfaceTint: Colors.transparent,
             ),
           ),
           child: child!,
