@@ -12,18 +12,19 @@ class VerificationField extends StatefulWidget {
     required this.minutes, // 남은 분
     required this.seconds, // 남은 초
     required this.onVerified,
+    required this.controller,
   });
 
   final int minutes;
   final int seconds;
   final VoidCallback onVerified;
+  final TextEditingController controller;
 
   @override
   State<VerificationField> createState() => _VerificationFieldState();
 }
 
 class _VerificationFieldState extends State<VerificationField> {
-  final _controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   /// 인증번호 유효성 여부
@@ -68,7 +69,7 @@ class _VerificationFieldState extends State<VerificationField> {
       child: Column(
         children: [
           TextFormField(
-            controller: _controller,
+            controller: widget.controller,
             autofocus: true,
             readOnly: _readOnly,
             enabled: _isEnabled,
@@ -120,11 +121,5 @@ class _VerificationFieldState extends State<VerificationField> {
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose(); // 컨트롤러 메모리 해제
-    super.dispose();
   }
 }
