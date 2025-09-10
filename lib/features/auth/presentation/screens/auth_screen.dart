@@ -2,11 +2,11 @@ import 'package:clozii/core/theme/context_extension.dart';
 import 'package:clozii/core/utils/loading_overlay.dart';
 import 'package:clozii/core/widgets/custom_button.dart';
 import 'package:clozii/features/auth/presentation/screens/verification_screen.dart';
-import 'package:clozii/features/auth/presentation/widgets/gender_dropdown_field.dart';
-import 'package:clozii/features/auth/presentation/widgets/mdy_date_picker.dart';
-import 'package:clozii/features/auth/presentation/widgets/name_field.dart';
-import 'package:clozii/features/auth/presentation/widgets/phone_number_field.dart';
-import 'package:clozii/features/auth/presentation/widgets/terms_and_conditions.dart';
+import 'package:clozii/features/auth/presentation/widgets/auth_screen/gender_dropdown_field.dart';
+import 'package:clozii/features/auth/presentation/widgets/auth_screen/mdy_date_picker.dart';
+import 'package:clozii/features/auth/presentation/widgets/auth_screen/name_field.dart';
+import 'package:clozii/features/auth/presentation/widgets/auth_screen/phone_number_field.dart';
+import 'package:clozii/features/auth/presentation/widgets/auth_screen/terms_and_conditions.dart';
 import 'package:flutter/material.dart';
 
 class AuthScreen extends StatefulWidget {
