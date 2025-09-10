@@ -59,7 +59,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
           return 'Phone number should have 11 digits.';
         }
 
-        if (value[0] != '0' && value[1] != '9') {
+        if (value[0] != '0' || value[1] != '9') {
           return 'Philippine phone numbers should start with "09".';
         }
 

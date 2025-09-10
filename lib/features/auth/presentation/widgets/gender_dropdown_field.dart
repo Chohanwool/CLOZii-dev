@@ -23,7 +23,7 @@ class GenderDropdownField extends StatelessWidget {
         style: context.textTheme.bodyLarge!.copyWith(color: Colors.grey),
       ),
       validator: (value) {
-        if (value != null &&
+        if (value == null &&
             !['Male', 'Female', 'Prefer not to say'].contains(value)) {
           return 'Please select gender from provided options!';
         }
