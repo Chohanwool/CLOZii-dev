@@ -27,12 +27,6 @@ class VerificationField extends StatefulWidget {
 class _VerificationFieldState extends State<VerificationField> {
   final _formKey = GlobalKey<FormState>();
 
-  /// 인증번호 유효성 여부
-  bool _isValid = false;
-
-  /// 인증번호 입력 필드 활성/비활성
-  bool _isEnabled = true;
-
   /// 필드의 읽기 전용 여부
   /// - 기본값: true (탭하기 전까지 수정 불가)
   bool _readOnly = false;
@@ -72,7 +66,6 @@ class _VerificationFieldState extends State<VerificationField> {
             controller: widget.controller,
             autofocus: true,
             readOnly: _readOnly,
-            enabled: _isEnabled,
 
             onTap: _onTap,
             onTapOutside: _onTapOutside,
