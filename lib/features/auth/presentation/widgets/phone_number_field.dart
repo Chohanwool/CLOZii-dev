@@ -12,13 +12,10 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart'; // �
 class PhoneNumberField extends StatefulWidget {
   const PhoneNumberField({
     super.key,
-    // required this.onChanged,
     required this.controller,
     required this.focusNode,
   });
 
-  /// 입력값 변경 시 호출되는 콜백
-  // final ValueChanged<String> onChanged;
   final TextEditingController controller;
   final FocusNode focusNode;
 
@@ -61,12 +58,15 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
           return 'Phone number must be 13-digit number.';
         }
 
+        if (value[0] != '0' && value[1] != '9') {
+          return 'Phone number must start with \'09\'';
+        }
+
         if (int.tryParse(value.replaceAll('-', '')) == null) {
           return 'Only numbers are allowed.';
         }
       },
       maxLength: 13, // "09##-###-####" 형식 최대 길이
-      // onChanged: widget.onChanged,
       buildCounter: _hideCounter, // 글자수 카운터 숨김
       keyboardType: TextInputType.number,
       inputFormatters: [
@@ -79,11 +79,6 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
         label: Text('Phone number', style: context.textTheme.labelLarge),
         floatingLabelBehavior: FloatingLabelBehavior.always,
 
-        /// 읽기 전용이 아니거나 이미 값이 있을 때 '09' 자동 표시
-        // prefixText:
-        //     widget.focusNode.hasFocus || widget.controller.text.isNotEmpty
-        //     ? '09'
-        //     : '',
         prefixStyle: TextStyle(
           /// 필드 활성화 시 - 숫자색 검정 / 필드 비활성화 시 - 숫자색 회색
           color: Colors.black,
@@ -102,10 +97,6 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
               )
             : null,
 
-        /// 힌트 텍스트는 읽기 전용일 때만 표시
-        // hintText: !widget.focusNode.hasFocus
-        //     ? 'Enter phone number without \'-\''
-        //     : null,
         hintText: '0900-000-0000',
         hintStyle: TextStyle(color: Colors.grey),
 

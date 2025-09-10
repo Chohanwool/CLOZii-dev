@@ -21,9 +21,16 @@ class _NameFieldState extends State<NameField> {
     return TextFormField(
       controller: widget.controller,
       focusNode: widget.focusNode,
+      autocorrect: false,
+      enableSuggestions: false,
+      textCapitalization: TextCapitalization.none,
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
           return 'Invalid name';
+        }
+
+        if (!RegExp(r'^[a-zA-Z]').hasMatch(value)) {
+          return 'Oops! Names must begin with letters.';
         }
 
         if (value.trim().length < 3) {

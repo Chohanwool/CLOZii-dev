@@ -40,7 +40,7 @@ class _AuthScreenState extends State<AuthScreen> {
   void initState() {
     super.initState();
 
-    _phoneNumberController.addListener(_checkPhoneNumberComplete);
+    _phoneNumberController.addListener(_checkPhoneNumberValid);
 
     _nameController.addListener(_checkNameValid);
 
@@ -53,7 +53,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   void dispose() {
-    _phoneNumberController.removeListener(_checkPhoneNumberComplete);
+    _phoneNumberController.removeListener(_checkPhoneNumberValid);
     _nameController.removeListener(_checkNameValid);
     _dateController.removeListener(_checkBirthdayValid);
 
@@ -89,7 +89,7 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  void _checkPhoneNumberComplete() {
+  void _checkPhoneNumberValid() {
     final cleanNumber = _phoneNumberController.text.replaceAll('-', '');
 
     if (cleanNumber.length == _phoneNumberMaxLength && _currentStep == 1) {
@@ -105,26 +105,26 @@ class _AuthScreenState extends State<AuthScreen> {
           _nameFocusNode.requestFocus();
         }
       });
+
+      return;
     }
+
+    setState(() {});
   }
 
   // 전화번호 완성
   String get _completePhoneNumber {
-    final cleanNumber = _phoneNumberController.text.replaceAll('-', '');
+    final cleanNumber = _phoneNumberController.text
+        .replaceAll('-', '')
+        .replaceFirst('09', '');
 
-    if (cleanNumber[0] != '0' && cleanNumber[1] != '9') {
-      throw Exception();
-    }
-
-    final numberWithoutPrefix = cleanNumber.replaceFirst('09', '');
-    return '$_phoneNumberPrefix$numberWithoutPrefix';
+    return '$_phoneNumberPrefix$cleanNumber';
   }
 
   void _nameTypedCheck() {
-    final phoneNumber = _completePhoneNumber;
     final name = _nameController.text.trim();
 
-    if (phoneNumber.length == 13 && name.isNotEmpty) {
+    if (name.isNotEmpty) {
       setState(() {
         _currentStep = 3;
       });
@@ -189,21 +189,36 @@ class _AuthScreenState extends State<AuthScreen> {
 
                 if (_currentStep >= 4) ...[
                   DropdownButtonFormField<String>(
+                    hint: Text(
+                      'Select Gender',
+                      style: context.textTheme.bodyLarge!.copyWith(
+                        color: Colors.grey,
+                      ),
+                    ),
                     focusNode: _genderFocusNode,
                     validator: (value) {
-                      if (value == null) {
-                        _selectedGender = 'Prefer not to say';
-                      }
+                      if (value == null) return 'Please select your gender.';
+                      return null;
                     },
                     value: _selectedGender,
-                    items: ['Male', 'Female', 'Prefer not to say']
-                        .map(
-                          (g) => DropdownMenuItem(
-                            value: g,
-                            child: Text(g, style: context.textTheme.bodyLarge),
+                    items: [
+                      DropdownMenuItem(
+                        value: null,
+                        enabled: false,
+                        child: Text(
+                          'Select Gender',
+                          style: context.textTheme.bodyLarge!.copyWith(
+                            color: Colors.grey,
                           ),
-                        )
-                        .toList(),
+                        ),
+                      ),
+                      ...['Male', 'Female', 'Prefer not to say'].map(
+                        (g) => DropdownMenuItem(
+                          value: g,
+                          child: Text(g, style: context.textTheme.bodyLarge),
+                        ),
+                      ),
+                    ],
                     onChanged: (val) => setState(() => _selectedGender = val),
                     decoration: InputDecoration(
                       isDense: true,
@@ -249,7 +264,6 @@ class _AuthScreenState extends State<AuthScreen> {
                 ],
 
                 PhoneNumberField(
-                  // onChanged: _onPhoneNumberTyped,
                   controller: _phoneNumberController,
                   focusNode: _phoneNumberFocusNode,
                 ),
