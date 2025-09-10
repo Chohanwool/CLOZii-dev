@@ -8,6 +8,7 @@ import 'package:clozii/features/auth/presentation/widgets/auth_screen/name_field
 import 'package:clozii/features/auth/presentation/widgets/auth_screen/phone_number_field.dart';
 import 'package:clozii/features/auth/presentation/widgets/auth_screen/terms_and_conditions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -181,7 +182,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
       try {
         //TODO: DB에 유저가 입력한 정보 저장
-        await Future.delayed(const Duration(milliseconds: 800)); // DB에 데이터를 저장하는 시간을 임의로 대체
+        await Future.delayed(
+          const Duration(milliseconds: 800),
+        ); // DB에 데이터를 저장하는 시간을 임의로 대체
 
         if (!mounted) return;
 
@@ -201,23 +204,33 @@ class _AuthScreenState extends State<AuthScreen> {
       appBar: AppBar(),
 
       bottomSheet: (_currentStep == 2 || _currentStep == 4)
-          ? Material(
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                color: Colors.transparent,
-                child: _currentStep == 2
-                    ? CustomButton(
-                        text: 'Continue',
-                        onTap: _isNameValid ? _nameTypedCheck : null,
-                        height: 50,
-                      )
-                    : CustomButton(
-                        // _currentStep == 3
-                        text: 'Verify & Complete',
-                        onTap: _birthDate != null ? allFieldValidCheck : null,
-                        height: 50,
-                      ),
-              ),
+          ? KeyboardVisibilityBuilder(
+              builder: (context, isKeyboardVisible) {
+                return Material(
+                  child: Container(
+                    padding: !isKeyboardVisible
+                        ? EdgeInsets.symmetric(horizontal: 16.0)
+                        : null,
+                    color: Colors.transparent,
+                    child: _currentStep == 2
+                        ? CustomButton(
+                            text: 'Continue',
+                            onTap: _isNameValid ? _nameTypedCheck : null,
+                            height: 50,
+                            isKeyboardVisible: isKeyboardVisible,
+                          )
+                        : CustomButton(
+                            // _currentStep == 4
+                            text: 'Verify & Complete',
+                            onTap: _birthDate != null
+                                ? allFieldValidCheck
+                                : null,
+                            height: 50,
+                            isKeyboardVisible: isKeyboardVisible,
+                          ),
+                  ),
+                );
+              },
             )
           : null,
 
