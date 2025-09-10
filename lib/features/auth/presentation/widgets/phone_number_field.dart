@@ -51,20 +51,41 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
       controller: widget.controller,
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
-          return 'Invalid phone number.';
+          return 'Oops! Don\'t forget your phone number.';
         }
 
         if (value.length < 13) {
-          return 'Phone number must be 13-digit number.';
+          // return 'That seems short — double check the digits!';
+          return 'Phone number should have 11 digits.';
         }
 
         if (value[0] != '0' && value[1] != '9') {
-          return 'Phone number must start with \'09\'';
+          return 'Philippine phone numbers should start with "09".';
+        }
+
+        // TODO: 전화번호 중복 체크 검증
+        // if (await isPhoneNumberRegistered(value)) {
+        //   return 'This number is already registered.';
+        // }
+
+        if (value.startsWith('+63')) {
+          return 'Please enter your number starting with "09", not "+63".';
+        }
+
+        final digitsOnly = value.replaceAll('-', '');
+        if (digitsOnly.length != 11) {
+          return 'Phone number should have exactly 11 digits.';
+        }
+
+        if (value.contains(' ')) {
+          return 'Please remove any spaces from your number.';
         }
 
         if (int.tryParse(value.replaceAll('-', '')) == null) {
-          return 'Only numbers are allowed.';
+          return 'Only numbers allowed — no letters or symbols!';
         }
+
+        return null;
       },
       maxLength: 13, // "09##-###-####" 형식 최대 길이
       buildCounter: _hideCounter, // 글자수 카운터 숨김

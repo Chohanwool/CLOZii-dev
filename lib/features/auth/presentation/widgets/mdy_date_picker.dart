@@ -82,13 +82,39 @@ class _PhilippinesDateFieldState extends State<PhilippinesDateField> {
       onTap: _selectDate,
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
-          return 'Invalid Date';
+          return 'Please enter your birthdate.';
         }
 
-        final birthYear = int.parse(value.substring(6));
-        if (DateTime.now().year - birthYear < 18) {
-          return 'Age below 18 can\'t use the app.';
+        try {
+          // parseStrict()를 사용하면 02/30/2024 같은 잘못된 날짜도 잡을 수 있음.
+          DateFormat('MM/dd/yyyy').parseStrict(value);
+        } catch (e) {
+          return 'Hmm... That doesn’t look like a valid date (MM/DD/YYYY).';
         }
+
+        final parsedDate = DateFormat('MM/dd/yyyy').parseStrict(value);
+        final today = DateTime.now();
+        final age =
+            today.year -
+            parsedDate.year -
+            // (현재 월 < 생월) 이거나 (현재 월 = 생월 이지만 아직 생일 전) -> 생일이 안 지난 년도 차감 (-1)
+            ((today.month < parsedDate.month ||
+                    (today.month == parsedDate.month &&
+                        today.day < parsedDate.day))
+                ? 1
+                : 0);
+
+        if (parsedDate.isAfter(today)) {
+          return 'Birthdate can\'t be in the future.';
+        }
+        if (age < 18) {
+          return 'You must be at least 18 to join.';
+        }
+        if (age > 120) {
+          return 'That doesn’t seem right. Please check your birth year.';
+        }
+
+        return null;
       },
       decoration: InputDecoration(
         isDense: true,

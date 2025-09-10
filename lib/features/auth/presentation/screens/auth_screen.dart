@@ -1,5 +1,6 @@
 import 'package:clozii/core/theme/context_extension.dart';
 import 'package:clozii/core/widgets/custom_button.dart';
+import 'package:clozii/features/auth/presentation/widgets/gender_dropdown_field.dart';
 import 'package:clozii/features/auth/presentation/widgets/mdy_date_picker.dart';
 import 'package:clozii/features/auth/presentation/widgets/name_field.dart';
 import 'package:clozii/features/auth/presentation/widgets/phone_number_field.dart';
@@ -188,51 +189,10 @@ class _AuthScreenState extends State<AuthScreen> {
                 const SizedBox(height: 24.0),
 
                 if (_currentStep >= 4) ...[
-                  DropdownButtonFormField<String>(
-                    hint: Text(
-                      'Select Gender',
-                      style: context.textTheme.bodyLarge!.copyWith(
-                        color: Colors.grey,
-                      ),
-                    ),
+                  GenderDropdownField(
                     focusNode: _genderFocusNode,
-                    validator: (value) {
-                      if (value == null) return 'Please select your gender.';
-                      return null;
-                    },
-                    value: _selectedGender,
-                    items: [
-                      DropdownMenuItem(
-                        value: null,
-                        enabled: false,
-                        child: Text(
-                          'Select Gender',
-                          style: context.textTheme.bodyLarge!.copyWith(
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                      ...['Male', 'Female', 'Prefer not to say'].map(
-                        (g) => DropdownMenuItem(
-                          value: g,
-                          child: Text(g, style: context.textTheme.bodyLarge),
-                        ),
-                      ),
-                    ],
+                    selectedGender: _selectedGender,
                     onChanged: (val) => setState(() => _selectedGender = val),
-                    decoration: InputDecoration(
-                      isDense: true,
-                      label: Text(
-                        'Gender',
-                        style: context.textTheme.labelLarge,
-                      ),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-
-                      border: OutlineInputBorder(),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black54),
-                      ),
-                    ),
                   ),
                   const SizedBox(height: 24.0),
                 ],
