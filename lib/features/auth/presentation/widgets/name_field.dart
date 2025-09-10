@@ -1,5 +1,6 @@
 import 'package:clozii/core/theme/context_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class NameField extends StatefulWidget {
   const NameField({
@@ -65,7 +66,7 @@ class _NameFieldState extends State<NameField> {
         }
 
         if (RegExp(r'[_]{2,}').hasMatch(value)) {
-          return 'Let’s avoid using too many underscores in a row.';
+          return 'Avoid using too many underscores in a row.';
         }
 
         if (value.trim().length > 20) {
@@ -80,6 +81,11 @@ class _NameFieldState extends State<NameField> {
       },
       onChanged: (value) {},
       keyboardType: TextInputType.text,
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(
+          RegExp(r'[a-zA-Z0-9_]'), // 영문자, 숫자, 언더스코어만 허용
+        ),
+      ],
       decoration: InputDecoration(
         isDense: true,
 
@@ -98,7 +104,7 @@ class _NameFieldState extends State<NameField> {
               )
             : null,
 
-        hintText: 'Enter phone holder\'s name',
+        hintText: 'Your name or nickname (ex: abc_123)',
         hintStyle: TextStyle(color: Colors.grey),
 
         border: OutlineInputBorder(),

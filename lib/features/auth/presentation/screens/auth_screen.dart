@@ -14,6 +14,7 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  String _headerText = 'Sign up with phone number.';
   int _currentStep = 1;
 
   bool _isNameValid = false;
@@ -70,6 +71,7 @@ class _AuthScreenState extends State<AuthScreen> {
     if (_birthDate != null) {
       setState(() {
         _currentStep = 4;
+        _changeHeaderText();
       });
 
       Future.delayed(const Duration(milliseconds: 100), () {
@@ -98,6 +100,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
       setState(() {
         _currentStep = 2;
+        _changeHeaderText();
       });
 
       // 약간의 지연 후 다음 필드로 포커스 이동
@@ -111,6 +114,20 @@ class _AuthScreenState extends State<AuthScreen> {
     }
 
     setState(() {});
+  }
+
+  void _changeHeaderText() {
+    if (_currentStep == 2) {
+      // _headerText = 'How do you want your neighbors to call you?';
+      // _headerText = 'Got a nickname in mind?';
+      _headerText = 'What should we call you?';
+    }
+    if (_currentStep == 3) {
+      _headerText = 'We need your birthdate to verify your age.';
+    }
+    if (_currentStep == 4) {
+      _headerText = 'This helps us personalize your experience.';
+    }
   }
 
   // 전화번호 완성
@@ -128,6 +145,7 @@ class _AuthScreenState extends State<AuthScreen> {
     if (name.isNotEmpty) {
       setState(() {
         _currentStep = 3;
+        _changeHeaderText();
       });
       _dateFocusNode.requestFocus();
     }
@@ -181,10 +199,7 @@ class _AuthScreenState extends State<AuthScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Signup with phone number',
-                  style: context.textTheme.titleLarge,
-                ),
+                Text(_headerText, style: context.textTheme.titleLarge),
 
                 const SizedBox(height: 24.0),
 
