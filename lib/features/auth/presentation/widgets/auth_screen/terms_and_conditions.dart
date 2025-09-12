@@ -1,7 +1,5 @@
-import 'package:clozii/core/theme/context_extension.dart';
-import 'package:clozii/core/utils/loading_overlay.dart';
+import 'package:clozii/core/utils/show_alert_dialog.dart';
 import 'package:clozii/core/widgets/custom_button.dart';
-import 'package:clozii/features/auth/presentation/screens/verification_screen.dart';
 import 'package:flutter/material.dart';
 
 enum Age { youth, adult }
@@ -50,7 +48,7 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
   // 	•	사용자 입력 + SMS 인증만으로 처리 → 실제 나이 확인은 안 하지만 법적 책임은 회피 가능.
   Future<void> _onStart() async {
     if (!isMainChecked) {
-      _showAlertDialog(
+      showAlertDialog(
         context,
         'You must accept the Terms and Conditions to proceed.',
       );
@@ -58,7 +56,7 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
     }
 
     if (_selectedOption == Age.youth) {
-      _showAlertDialog(
+      showAlertDialog(
         context,
         'You must be at least 18 years old to use this app.',
       );
@@ -66,77 +64,14 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
     }
 
     if (_selectedOption == null) {
-      _showAlertDialog(context, 'You need to verify your age!');
+      showAlertDialog(context, 'You need to verify your age!');
       return;
     }
 
     Navigator.of(context).pop(true);
   }
 
-  void _showAlertDialog(BuildContext context, String message) {
-    final radius = Radius.circular(12.0);
-
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.all(radius),
-          ),
-          backgroundColor: Colors.white,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 40.0,
-                  vertical: 10.0,
-                ),
-                child: Column(
-                  children: [
-                    Text('Notice', style: context.textTheme.titleMedium),
-                    const SizedBox(height: 10.0),
-                    Text(
-                      message,
-                      style: context.textTheme.bodyMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12.0),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                height: 40.0,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.only(
-                        bottomLeft: radius,
-                        bottomRight: radius,
-                      ),
-                    ),
-                    backgroundColor: context.colors.primary,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    'ok',
-                    style: context.textTheme.bodyMedium!.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: context.colors.onPrimary,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  
 
   /// 전체 동의 토글
   /// - 전체 체크 시 필수/선택 모두 체크
